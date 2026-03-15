@@ -71,6 +71,40 @@ document.addEventListener('DOMContentLoaded', () => {
         };
     }
 
+    function generateWhatsappText(order) {
+        const lines = [
+            `*ORDER CONFIRM ✅*`,
+            ``,
+            `*Order Id:* ${order.id}`,
+            ``
+        ];
+
+        // Aggregate items by name and qty
+        const aggregated = {};
+        order.items.forEach(it => {
+            const key = `${it.name}|${it.qty || ''}`;
+            if (!aggregated[key]) {
+                aggregated[key] = { ...it, unit: 0 };
+            }
+            aggregated[key].unit += (parseInt(it.unit) || 0);
+        });
+
+        // Display aggregated lines
+        Object.values(aggregated).forEach(it => {
+            if (it.unit <= 0) return;
+            const label = it.name.split(' (')[0];
+            const emoji = ITEM_TYPES.find(c => c.name === it.name)?.emoji || '📦';
+            lines.push(`👉 ${it.qty || ''} ${label} x ${it.unit} ${emoji}`);
+        });
+
+        if (order.comment === 'Porter') {
+            lines.push(``, `🚚 *Porter Delivery Requested*`);
+        } else {
+            lines.push(``, `ઓર્ડર લેવા આવો ત્યારે તમારો ઓર્ડર નંબર અને નામ ત્યાં જણાવવું`);
+        }
+        return lines.join('\n');
+    }
+
     function generateOrderId() {
         if (orders.length === 0) return 1;
         return Math.max(...orders.map(o => o.id)) + 1;
@@ -269,13 +303,22 @@ document.addEventListener('DOMContentLoaded', () => {
         window.scrollTo({ top: 0, behavior: 'smooth' });
     };
 
+
+
     window.showWhatsapp = (id) => {
         const order = orders.find(o => o.id === id);
         if (!order) return;
 
-        const lines = [`*ORDER CONFIRM ✅*`, ``, `Order Id: ${order.id}`];
+        // Populate Modal UI
+        document.getElementById('detailOrderId').textContent = order.id;
+        document.getElementById('detailCustomerName').textContent = order.name;
+        document.getElementById('detailContact').textContent = order.contact;
+        document.getElementById('detailPorterRow').style.display = order.comment === 'Porter' ? 'flex' : 'none';
 
-        // Aggregate items by name and qty
+        const detailItemsList = document.getElementById('detailItemsList');
+        detailItemsList.innerHTML = '';
+
+        // Aggregate items for modal display (similar logic to WhatsApp text)
         const aggregated = {};
         order.items.forEach(it => {
             const key = `${it.name}|${it.qty || ''}`;
@@ -285,21 +328,24 @@ document.addEventListener('DOMContentLoaded', () => {
             aggregated[key].unit += (parseInt(it.unit) || 0);
         });
 
-        // Display aggregated lines
         Object.values(aggregated).forEach(it => {
             if (it.unit <= 0) return;
+            const row = document.createElement('div');
+            row.className = 'item-stat-row';
+            row.style.margin = '0'; // Reset margin for modal
+
             const label = it.name.split(' (')[0];
             const emoji = ITEM_TYPES.find(c => c.name === it.name)?.emoji || '📦';
-            lines.push(`👉 ${it.qty || ''} ${label} x ${it.unit} ${emoji}`);
+
+            row.innerHTML = `
+                <span class="qty-label">${emoji} ${it.qty || ''} ${label}</span>
+                <span class="unit-val">${it.unit}</span>
+            `;
+            detailItemsList.appendChild(row);
         });
 
-        if (order.comment === 'Porter') {
-            lines.push(``, `🚚 *Porter Delivery Requested*`);
-        } else {
-            lines.push(``, `ઓર્ડર લેવા આવો ત્યારે તમારો ઓર્ડર નંબર અને નામ ત્યાં જણાવવું`);
-        }
-
-        whatsappOutput.textContent = lines.join('\n');
+        // Store generated text in hidden pre for copying
+        whatsappOutput.textContent = generateWhatsappText(order);
         whatsappOverlay.classList.remove('hidden');
     };
 
@@ -370,7 +416,12 @@ document.addEventListener('DOMContentLoaded', () => {
         saveToLocale();
         clearBtn.click();
         formOverlay.classList.add('hidden');
-        showToast('Order saved successfully!');
+
+        // Auto-copy WhatsApp message
+        const whatsappMsg = generateWhatsappText(orderData);
+        navigator.clipboard.writeText(whatsappMsg).then(() => {
+            showToast('Order saved & WhatsApp message copied!');
+        });
     };
 
     exportAllBtn.onclick = () => {

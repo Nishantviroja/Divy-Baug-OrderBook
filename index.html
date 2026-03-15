@@ -27,9 +27,12 @@
                     <i class="fa-solid fa-chart-simple" style="color: var(--primary)"></i>
                     <h2>Statistics</h2>
                 </div>
-                <button class="btn btn-primary" id="openFormBtn">
-                    <i class="fa-solid fa-plus"></i> New Order
-                </button>
+                <div>
+
+                    <button class="btn btn-primary" id="openFormBtn">
+                        <i class="fa-solid fa-plus"></i> New Order
+                    </button>
+                </div>
             </div>
             <div id="itemStatsList" class="item-stats-grid">
                 <!-- Data Injected Here -->
@@ -122,16 +125,60 @@
             </div>
         </div>
 
-        <!-- WhatsApp Modal -->
+        <!-- Order Details / WhatsApp Modal -->
         <div id="whatsappOverlay" class="overlay hidden">
-            <div class="modal confirm-modal">
+            <div class="modal" style="max-width: 500px;">
                 <div class="dashboard-header" style="border:none; padding:0; margin-bottom: 1.5rem;">
-                    <h3>Confirm WhatsApp</h3>
+                    <h3>Order Details</h3>
                     <button class="action-btn" id="closeModalBtn"><i class="fa-solid fa-xmark"></i></button>
                 </div>
-                <pre id="whatsappOutput"
-                    style="background: var(--bg-main); padding: 1rem; border-radius: var(--radius-md); font-size: 0.9rem; margin-bottom: 1.5rem;"></pre>
-                <button class="btn btn-primary" id="copyWhatsappBtn" style="width: 100%;">Copy Message & Close</button>
+
+                <div id="orderDetailsContent">
+                    <!-- Customer Summary -->
+                    <div
+                        style="background: var(--bg-main); padding: 1rem; border-radius: var(--radius-md); margin-bottom: 1rem; border: 1px solid var(--border);">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                            <span class="qty-label">Order ID</span>
+                            <span style="font-weight: 700;" id="detailOrderId">-</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                            <span class="qty-label">Customer</span>
+                            <span style="font-weight: 700;" id="detailCustomerName">-</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                            <span class="qty-label">Contact</span>
+                            <span style="font-weight: 700;" id="detailContact">-</span>
+                        </div>
+
+                        <div id="detailPorterRow"
+                            style="display: none; justify-content: space-between; color: var(--primary);">
+                            <span class="qty-label" style="color: var(--primary);">Delivery</span>
+                            <span style="font-weight: 700;"><i class="fa-solid fa-truck"></i> Porter</span>
+                        </div>
+                    </div>
+
+                    <!-- Items Summary -->
+                    <div style="margin-bottom: 1.5rem;">
+                        <h4 style="font-size: 0.9rem; margin-bottom: 0.75rem; color: var(--text-muted);">Items Summary
+                        </h4>
+                        <div id="detailItemsList"
+                            style="display: flex; flex-direction: column; gap: 0.5rem; margin-bottom: 1.5rem;">
+                            <!-- Items injected here -->
+                        </div>
+                    </div>
+
+                    <!-- WhatsApp Preview -->
+                    <div style="margin-bottom: 1.5rem;">
+                        <h4 style="font-size: 0.9rem; margin-bottom: 0.75rem; color: var(--text-muted);">WhatsApp
+                            Message Preview</h4>
+                        <pre id="whatsappOutput"
+                            style="background: #F3F4F6; padding: 1rem; border-radius: var(--radius-md); font-size: 0.85rem; border: 1px dashed #D1D5DB; white-space: pre-wrap; font-family: monospace;"></pre>
+                    </div>
+                </div>
+
+                <button class="btn btn-primary" id="copyWhatsappBtn" style="width: 100%;">
+                    <i class="fa-solid fa-copy"></i> Copy WhatsApp Message
+                </button>
             </div>
         </div>
 

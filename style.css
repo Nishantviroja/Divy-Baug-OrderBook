@@ -70,6 +70,7 @@ header {
 .header-content {
     flex: 1;
     min-width: 250px;
+    text-align: start;
 }
 
 /* Buttons */
@@ -146,6 +147,7 @@ header {
     align-items: center;
     margin-bottom: 1rem;
     padding-bottom: 0.75rem;
+    flex-wrap: wrap;
     border-bottom: 1px solid var(--border);
 }
 
@@ -206,7 +208,14 @@ header {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    flex-wrap: wrap;
     gap: 1rem;
+}
+
+.header-actions {
+    display: flex;
+    gap: 5px;
+    flex-direction: row;
 }
 
 .excel-preview-wrapper {
@@ -458,7 +467,6 @@ input:checked+.slider:before {
     }
 
     .dashboard-header {
-        flex-direction: column;
         align-items: flex-start;
         gap: 0.75rem;
     }
