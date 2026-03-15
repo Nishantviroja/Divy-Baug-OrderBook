@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Divy Baug OrderBook</title>
+    <meta name="description" content="A clean, modern order generation tool">
+    <link href="https://fonts.googleapis.com/css2?family=Anek+Gujarati:wght@100..800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div class="container">
+        <header>
+            <div class="header-content">
+                <h1>Divy Baug OrderBook</h1>
+                <p>Track, manage, and confirm your daily deliveries effortlessly.</p>
+            </div>
+        </header>
+
+        <!-- Order Statistics Dashboard -->
+        <section class="stats-dashboard">
+            <div class="dashboard-header">
+                <div class="dashboard-title">
+                    <i class="fa-solid fa-chart-simple" style="color: var(--primary)"></i>
+                    <h2>Statistics</h2>
+                </div>
+                <button class="btn btn-primary" id="openFormBtn">
+                    <i class="fa-solid fa-plus"></i> New Order
+                </button>
+            </div>
+            <div id="itemStatsList" class="item-stats-grid">
+                <!-- Data Injected Here -->
+            </div>
+        </section>
+
+        <!-- Orders Table Section -->
+        <main id="ordersContainer" class="output-container">
+            <div class="output-header">
+                <h3>Current Orders</h3>
+                <div class="header-actions">
+                    <button class="btn btn-secondary" id="exportAllBtn" title="Copy All Data">
+                        <i class="fa-solid fa-file-export"></i>
+                    </button>
+                    <button class="btn btn-secondary" id="printBtn" title="Download PDF">
+                        <i class="fa-solid fa-file-pdf"></i>
+                    </button>
+                    <button class="btn btn-remove-all" id="deleteAllBtn" title="Clear All History">
+                        <i class="fa-solid fa-trash-can"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="excel-preview-wrapper">
+                <table class="excel-preview" id="ordersTable">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Name</th>
+                            <th>Contact</th>
+                            <th>જામફળ</th>
+                            <th>ટેટી</th>
+                            <th>Moringa</th>
+                            <th>Comment</th>
+                            <th style="width: 100px;">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="ordersTableBody">
+                        <!-- Rows Injected Here -->
+                    </tbody>
+                </table>
+            </div>
+        </main>
+
+        <!-- Modals -->
+
+        <!-- Order Form Modal -->
+        <div id="formOverlay" class="overlay hidden">
+            <div class="modal">
+                <div class="dashboard-header" style="border:none; padding:0; margin-bottom: 2rem;">
+                    <h2 id="formModalTitle">Order Details</h2>
+                    <button class="action-btn" id="closeFormBtn"><i class="fa-solid fa-xmark"></i></button>
+                </div>
+                <form id="orderForm">
+                    <div class="input-group">
+                        <label>Customer Name</label>
+                        <input type="text" id="customerName" placeholder="Enter name" required />
+                    </div>
+                    <div class="input-group">
+                        <label>Contact Number</label>
+                        <input type="tel" id="contactNo" placeholder="Enter contact" required />
+                    </div>
+
+                    <div style="margin: 1.5rem 0;">
+                        <div class="dashboard-header" style="border:none; padding:0; margin-bottom: 1rem;">
+                            <h3>Order Items</h3>
+                            <button type="button" class="btn btn-secondary" id="addItemBtn">
+                                <i class="fa-solid fa-plus"></i> Add
+                            </button>
+                        </div>
+                        <div id="itemsList">
+                            <!-- Items Injected Here -->
+                        </div>
+                    </div>
+
+                    <div class="input-group"
+                        style="flex-direction: row; align-items: center; justify-content: space-between; background: var(--bg-main); padding: 0.75rem 1rem; border-radius: var(--radius-md); border: 1px solid var(--border);">
+                        <label for="porterSwitch" style="margin: 0; font-weight: 600;">Porter Delivery Required</label>
+                        <label class="switch">
+                            <input type="checkbox" id="porterSwitch">
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+
+                    <div class="actions"
+                        style="margin-top: 2rem; display: flex; gap: 0.75rem; justify-content: flex-end;">
+                        <button type="button" class="btn btn-secondary" id="clearBtn">Reset</button>
+                        <button type="submit" class="btn btn-primary" id="submitBtn">Save Order</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- WhatsApp Modal -->
+        <div id="whatsappOverlay" class="overlay hidden">
+            <div class="modal confirm-modal">
+                <div class="dashboard-header" style="border:none; padding:0; margin-bottom: 1.5rem;">
+                    <h3>Confirm WhatsApp</h3>
+                    <button class="action-btn" id="closeModalBtn"><i class="fa-solid fa-xmark"></i></button>
+                </div>
+                <pre id="whatsappOutput"
+                    style="background: var(--bg-main); padding: 1rem; border-radius: var(--radius-md); font-size: 0.9rem; margin-bottom: 1.5rem;"></pre>
+                <button class="btn btn-primary" id="copyWhatsappBtn" style="width: 100%;">Copy Message & Close</button>
+            </div>
+        </div>
+
+        <!-- Delete Modal -->
+        <div id="deleteConfirmOverlay" class="overlay hidden">
+            <div class="modal confirm-modal">
+                <div class="dashboard-header" style="border:none; padding:0; margin-bottom: 1rem;">
+                    <h3>Delete Order?</h3>
+                    <button class="action-btn" id="closeDeleteModalBtn"><i class="fa-solid fa-xmark"></i></button>
+                </div>
+                <p style="margin-bottom: 1.5rem;">This will permanently remove the order. You can copy the data before
+                    deleting.</p>
+                <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+                    <button class="btn btn-secondary" id="modalCopyBtn"><i class="fa-solid fa-copy"></i> Copy Order
+                        Data</button>
+                    <button class="btn btn-secondary" id="cancelDeleteBtn">Cancel</button>
+                    <button class="btn btn-remove-all" id="confirmDeleteBtn" style="width: 100%;">Delete
+                        Forever</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast -->
+    <div id="toast" class="toast">Copied to clipboard!</div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
+    <script src="script.js"></script>
+</body>
+
+</html>
